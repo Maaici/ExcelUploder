@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelUploder", "ExcelUploder\ExcelUploder.csproj", "{D89D272B-A822-4782-89BC-B40CF94A64A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D89D272B-A822-4782-89BC-B40CF94A64A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D89D272B-A822-4782-89BC-B40CF94A64A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D89D272B-A822-4782-89BC-B40CF94A64A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D89D272B-A822-4782-89BC-B40CF94A64A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0956FA9-50E0-4574-BB84-DACFF70FDEA8}
+	EndGlobalSection
+EndGlobal
