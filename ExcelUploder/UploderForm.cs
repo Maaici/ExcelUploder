@@ -34,7 +34,8 @@ namespace ExcelUploder
         //检验数据库是否能正确链接
         private void Btn_test_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txt_table.Text)) {
+            if (string.IsNullOrEmpty(txt_table.Text))
+            {
                 lab_alert.Text = "表名是必填的！";
                 txt_table.Focus();
                 return;
@@ -44,23 +45,31 @@ namespace ExcelUploder
             {
                 conn = Common.GetConnection(txt_connStr.Text);
             }
-            else {
+            else
+            {
                 if (string.IsNullOrEmpty(txt_dbServer.Text) || string.IsNullOrEmpty(txt_user.Text) || string.IsNullOrEmpty(txt_pwd.Text))
                 {
                     lab_alert.Text = "缺少数据库配置！";
+                    return;
                 }
                 conn = Common.GetConnection(txt_dbServer.Text, txt_dbName.Text, txt_user.Text, txt_pwd.Text);
             }
-            try
-            {
-                conn.Open();
-                //return true;
-            }
-            catch (Exception)
-            {
-                //return false;
-            }
-            
+            Task.Run(() =>{
+                       try
+                       {
+                           conn.Open();
+                           //lab_alert.Text = "可以使用！";
+                       }
+                       catch (Exception)
+                       {
+                           //lab_alert.Text = "数据库配置不正确，不能连接！";
+                       }
+                       finally
+                       {
+                           conn.Close();
+                       }
+                   });
+
         }
     }
 }
