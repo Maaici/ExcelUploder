@@ -50,8 +50,17 @@ namespace ExcelUploder
                     lab_alert.Text = "缺少数据库配置！";
                 }
                 conn = Common.GetConnection(txt_dbServer.Text, txt_dbName.Text, txt_user.Text, txt_pwd.Text);
-
             }
+            try
+            {
+                conn.Open();
+                //return true;
+            }
+            catch (Exception)
+            {
+                //return false;
+            }
+            
         }
     }
 }
