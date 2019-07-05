@@ -73,9 +73,9 @@ namespace ExcelUploder
             if (!ShowTestMessage()) {
                 return;
             }
-            //验证上传的excel文件中是否有不能对应的字段名
             List<string> uCols = Common.GetColumnNamesFromDt((DataTable)dataGridView1.DataSource);
             List<string> errCols = new List<string>();
+            //验证上传的excel文件中是否有不能对应的字段名
             foreach (string col in uCols) {
                 var dbCols = hidetxt_cols.Text.Split(',');
                 if (!dbCols.Contains(col)) {
@@ -84,6 +84,13 @@ namespace ExcelUploder
             }
             if (errCols.Any()) {
                 MessageBox.Show($"以下字段在数据库的对应表中未能找到对应：[{string.Join(",",errCols)}]，请核对后再试！");
+                return;
+            }
+
+            //验证上传的文件中是否有重复的字段名
+            if (uCols.Count() != uCols.Distinct().Count()) {
+                MessageBox.Show($"导入了有相同字段名的数据，请核对后再试！");
+                return;
             }
 
         }

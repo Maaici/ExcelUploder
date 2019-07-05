@@ -49,8 +49,10 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.lab_path = new System.Windows.Forms.Label();
             this.hidetxt_cols = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -228,12 +230,15 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 216);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(839, 400);
+            this.dataGridView1.Size = new System.Drawing.Size(834, 387);
             this.dataGridView1.TabIndex = 12;
             // 
             // lab_path
@@ -253,14 +258,25 @@
             this.hidetxt_cols.TabIndex = 15;
             this.hidetxt_cols.Visible = false;
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.dataGridView1);
+            this.panel1.Location = new System.Drawing.Point(11, 216);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(840, 393);
+            this.panel1.TabIndex = 16;
+            // 
             // UploderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(863, 627);
+            this.ClientSize = new System.Drawing.Size(863, 621);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.hidetxt_cols);
             this.Controls.Add(this.lab_path);
-            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btn_select);
             this.Controls.Add(this.btn_upload);
             this.Controls.Add(this.groupBox1);
@@ -270,6 +286,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,6 +315,7 @@
         private System.Windows.Forms.Label lab_path;
         private System.Windows.Forms.CheckBox che_usewin;
         private System.Windows.Forms.TextBox hidetxt_cols;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
