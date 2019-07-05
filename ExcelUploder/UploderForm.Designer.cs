@@ -38,14 +38,17 @@
             this.txt_table = new System.Windows.Forms.TextBox();
             this.btn_test = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.che_usewin = new System.Windows.Forms.CheckBox();
+            this.lab_alert = new System.Windows.Forms.Label();
+            this.txt_connStr = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txt_dbName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.btn_upload = new System.Windows.Forms.Button();
             this.btn_select = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.txt_dbName = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txt_connStr = new System.Windows.Forms.TextBox();
-            this.lab_alert = new System.Windows.Forms.Label();
+            this.lab_path = new System.Windows.Forms.Label();
+            this.hidetxt_cols = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +65,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(290, 34);
+            this.label2.Location = new System.Drawing.Point(6, 65);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
             this.label2.TabIndex = 1;
@@ -71,7 +74,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(291, 65);
+            this.label3.Location = new System.Drawing.Point(7, 96);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 2;
@@ -80,7 +83,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(573, 34);
+            this.label4.Location = new System.Drawing.Point(330, 95);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 12);
             this.label4.TabIndex = 3;
@@ -95,30 +98,30 @@
             // 
             // txt_user
             // 
-            this.txt_user.Location = new System.Drawing.Point(374, 31);
+            this.txt_user.Location = new System.Drawing.Point(90, 62);
             this.txt_user.Name = "txt_user";
             this.txt_user.Size = new System.Drawing.Size(152, 21);
             this.txt_user.TabIndex = 5;
             // 
             // txt_pwd
             // 
-            this.txt_pwd.Location = new System.Drawing.Point(374, 62);
+            this.txt_pwd.Location = new System.Drawing.Point(90, 93);
             this.txt_pwd.Name = "txt_pwd";
             this.txt_pwd.Size = new System.Drawing.Size(152, 21);
             this.txt_pwd.TabIndex = 6;
             // 
             // txt_table
             // 
-            this.txt_table.Location = new System.Drawing.Point(655, 31);
+            this.txt_table.Location = new System.Drawing.Point(414, 92);
             this.txt_table.Name = "txt_table";
             this.txt_table.Size = new System.Drawing.Size(152, 21);
             this.txt_table.TabIndex = 7;
             // 
             // btn_test
             // 
-            this.btn_test.Location = new System.Drawing.Point(655, 104);
+            this.btn_test.Location = new System.Drawing.Point(630, 96);
             this.btn_test.Name = "btn_test";
-            this.btn_test.Size = new System.Drawing.Size(152, 24);
+            this.btn_test.Size = new System.Drawing.Size(113, 42);
             this.btn_test.TabIndex = 8;
             this.btn_test.Text = "连接测试";
             this.btn_test.UseVisualStyleBackColor = true;
@@ -126,6 +129,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.che_usewin);
             this.groupBox1.Controls.Add(this.lab_alert);
             this.groupBox1.Controls.Add(this.txt_connStr);
             this.groupBox1.Controls.Add(this.label5);
@@ -147,6 +151,59 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "目标数据库配置";
             // 
+            // che_usewin
+            // 
+            this.che_usewin.AutoSize = true;
+            this.che_usewin.Location = new System.Drawing.Point(332, 33);
+            this.che_usewin.Name = "che_usewin";
+            this.che_usewin.Size = new System.Drawing.Size(132, 16);
+            this.che_usewin.TabIndex = 17;
+            this.che_usewin.Text = "使用Window账号登陆";
+            this.che_usewin.UseVisualStyleBackColor = true;
+            this.che_usewin.CheckedChanged += new System.EventHandler(this.Che_usewin_CheckedChanged);
+            // 
+            // lab_alert
+            // 
+            this.lab_alert.AutoSize = true;
+            this.lab_alert.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lab_alert.ForeColor = System.Drawing.Color.Red;
+            this.lab_alert.Location = new System.Drawing.Point(595, 36);
+            this.lab_alert.Name = "lab_alert";
+            this.lab_alert.Size = new System.Drawing.Size(0, 16);
+            this.lab_alert.TabIndex = 15;
+            // 
+            // txt_connStr
+            // 
+            this.txt_connStr.Location = new System.Drawing.Point(90, 123);
+            this.txt_connStr.Name = "txt_connStr";
+            this.txt_connStr.Size = new System.Drawing.Size(476, 21);
+            this.txt_connStr.TabIndex = 14;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 126);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(65, 12);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "连接字符串";
+            // 
+            // txt_dbName
+            // 
+            this.txt_dbName.Location = new System.Drawing.Point(414, 62);
+            this.txt_dbName.Name = "txt_dbName";
+            this.txt_dbName.Size = new System.Drawing.Size(152, 21);
+            this.txt_dbName.TabIndex = 12;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(330, 65);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 12);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "数据库名";
+            // 
             // btn_upload
             // 
             this.btn_upload.Location = new System.Drawing.Point(642, 172);
@@ -155,6 +212,7 @@
             this.btn_upload.TabIndex = 10;
             this.btn_upload.Text = "确认上传";
             this.btn_upload.UseVisualStyleBackColor = true;
+            this.btn_upload.Click += new System.EventHandler(this.Btn_upload_Click);
             // 
             // btn_select
             // 
@@ -168,70 +226,52 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 215);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 216);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(839, 400);
             this.dataGridView1.TabIndex = 12;
             // 
-            // txt_dbName
+            // lab_path
             // 
-            this.txt_dbName.Location = new System.Drawing.Point(90, 62);
-            this.txt_dbName.Name = "txt_dbName";
-            this.txt_dbName.Size = new System.Drawing.Size(152, 21);
-            this.txt_dbName.TabIndex = 12;
+            this.lab_path.AutoSize = true;
+            this.lab_path.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lab_path.Location = new System.Drawing.Point(227, 183);
+            this.lab_path.Name = "lab_path";
+            this.lab_path.Size = new System.Drawing.Size(0, 14);
+            this.lab_path.TabIndex = 14;
             // 
-            // label7
+            // hidetxt_cols
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 65);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(53, 12);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "数据库名";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 104);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 12);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "连接字符串";
-            // 
-            // txt_connStr
-            // 
-            this.txt_connStr.Location = new System.Drawing.Point(90, 101);
-            this.txt_connStr.Name = "txt_connStr";
-            this.txt_connStr.Size = new System.Drawing.Size(436, 21);
-            this.txt_connStr.TabIndex = 14;
-            // 
-            // lab_alert
-            // 
-            this.lab_alert.AutoSize = true;
-            this.lab_alert.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lab_alert.ForeColor = System.Drawing.Color.Red;
-            this.lab_alert.Location = new System.Drawing.Point(572, 67);
-            this.lab_alert.Name = "lab_alert";
-            this.lab_alert.Size = new System.Drawing.Size(0, 16);
-            this.lab_alert.TabIndex = 15;
+            this.hidetxt_cols.Location = new System.Drawing.Point(12, 175);
+            this.hidetxt_cols.Name = "hidetxt_cols";
+            this.hidetxt_cols.Size = new System.Drawing.Size(29, 21);
+            this.hidetxt_cols.TabIndex = 15;
+            this.hidetxt_cols.Visible = false;
             // 
             // UploderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 627);
+            this.Controls.Add(this.hidetxt_cols);
+            this.Controls.Add(this.lab_path);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btn_select);
             this.Controls.Add(this.btn_upload);
             this.Controls.Add(this.groupBox1);
             this.Name = "UploderForm";
-            this.Text = "excel上传工具";
+            this.Text = "excel上传工具（仅支持sql server）";
+            this.Load += new System.EventHandler(this.UploderForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -255,6 +295,9 @@
         private System.Windows.Forms.TextBox txt_connStr;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lab_alert;
+        private System.Windows.Forms.Label lab_path;
+        private System.Windows.Forms.CheckBox che_usewin;
+        private System.Windows.Forms.TextBox hidetxt_cols;
     }
 }
 

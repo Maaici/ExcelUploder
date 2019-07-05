@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,8 +19,39 @@ namespace ExcelUploder
             InitializeComponent();
         }
 
+        private void UploderForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void Che_usewin_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.che_usewin.Checked)
+            {
+                this.txt_user.Enabled = false;
+                this.txt_pwd.Enabled = false;
+            }
+            else
+            {
+                txt_user.Enabled = true;
+                txt_pwd.Enabled = true;
+            }
+        }
+
+        //测试按钮
+        private void Btn_test_Click(object sender, EventArgs e)
+        {
+            ShowTestMessage();
+        }
+
+        //选择文件
         private void btn_select_Click(object sender, EventArgs e)
         {
+            //先验证是否能链接数据库
+            if (!ShowTestMessage())
+            {
+                return;
+            }
+
             OpenFileDialog openFileDialog1 = new OpenFileDialog();     //显示选择文件对话框
             openFileDialog1.Filter = "excel files (*.xls,*.xlsx)|*.xls;*.xlsx";
             openFileDialog1.FilterIndex = 2;
@@ -27,49 +59,104 @@ namespace ExcelUploder
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                this.txt_dbServer.Text = openFileDialog1.FileName;          //显示文件路径
+                //显示文件路径
+                lab_path.Text = openFileDialog1.FileName;
+                //将选中的excel数据加载到datagirdview中
+                this.dataGridView1.DataSource = ExcelHelper.ExcelImport(openFileDialog1.FileName);
             }
         }
 
+        //上传按钮
+        private void Btn_upload_Click(object sender, EventArgs e)
+        {
+            //先验证是否能链接数据库
+            if (!ShowTestMessage()) {
+                return;
+            }
+            //验证上传的excel文件中是否有不能对应的字段名
+            List<string> uCols = Common.GetColumnNamesFromDt((DataTable)dataGridView1.DataSource);
+            List<string> errCols = new List<string>();
+            foreach (string col in uCols) {
+                var dbCols = hidetxt_cols.Text.Split(',');
+                if (!dbCols.Contains(col)) {
+                    errCols.Add(col);
+                }
+            }
+            if (errCols.Any()) {
+                MessageBox.Show($"以下字段在数据库的对应表中未能找到对应：[{string.Join(",",errCols)}]，请核对后再试！");
+            }
+
+        }
+
         //检验数据库是否能正确链接
-        private void Btn_test_Click(object sender, EventArgs e)
+        private bool TestConnection()
         {
             if (string.IsNullOrEmpty(txt_table.Text))
             {
-                lab_alert.Text = "表名是必填的！";
-                txt_table.Focus();
-                return;
+                return false;
             }
             SqlConnection conn;
+            //直接使用连接字符串连接
             if (!string.IsNullOrEmpty(txt_connStr.Text))
             {
                 conn = Common.GetConnection(txt_connStr.Text);
             }
             else
             {
-                if (string.IsNullOrEmpty(txt_dbServer.Text) || string.IsNullOrEmpty(txt_user.Text) || string.IsNullOrEmpty(txt_pwd.Text))
+                //使用windows账号登陆
+                if (che_usewin.Checked)
                 {
-                    lab_alert.Text = "缺少数据库配置！";
-                    return;
+                    conn = Common.GetConnection(txt_dbServer.Text, txt_dbName.Text);
                 }
-                conn = Common.GetConnection(txt_dbServer.Text, txt_dbName.Text, txt_user.Text, txt_pwd.Text);
+                //sql server账号登陆
+                else
+                {
+                    if (string.IsNullOrEmpty(txt_dbServer.Text) || string.IsNullOrEmpty(txt_user.Text) || string.IsNullOrEmpty(txt_pwd.Text))
+                    {
+                        return false;
+                    }
+                    conn = Common.GetConnection(txt_dbServer.Text, txt_dbName.Text, txt_user.Text, txt_pwd.Text);
+                }
             }
-            Task.Run(() =>{
-                       try
-                       {
-                           conn.Open();
-                           //lab_alert.Text = "可以使用！";
-                       }
-                       catch (Exception)
-                       {
-                           //lab_alert.Text = "数据库配置不正确，不能连接！";
-                       }
-                       finally
-                       {
-                           conn.Close();
-                       }
-                   });
 
+            try
+            {
+                //测试链接是否能打开
+                conn.Open();
+                //测试表名是否存在
+                if (Common.TestConnAndTable(conn, txt_table.Text,hidetxt_cols))
+                {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
+
+        //展示链接测试的结果，并返回测试成功与否
+        private bool ShowTestMessage() {
+            var ret = TestConnection();
+            if (ret)
+            {
+                lab_alert.ForeColor = Color.Green;
+                lab_alert.Text = "该配置可用！";
+            }
+            else
+            {
+                lab_alert.ForeColor = Color.Red;
+                lab_alert.Text = "请先确保数据库链接配置正确！";
+            }
+            return ret;
+        }
+
     }
 }
