@@ -14,6 +14,7 @@ namespace ExcelUploder
 {
     public partial class UploderForm : Form
     {
+        public SqlConnection conn;
         public UploderForm()
         {
             InitializeComponent();
@@ -69,40 +70,58 @@ namespace ExcelUploder
         //上传按钮
         private void Btn_upload_Click(object sender, EventArgs e)
         {
-            //先验证是否能链接数据库
-            if (!ShowTestMessage()) {
+            //拉取字段信息，如果抛异常说明连接字符串有异常
+            Dictionary<string, Type> columns;
+            try
+            {
+                columns = Common.TestConnAndTable(conn, txt_table.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show($"请检查链接配置和目标表名是否正确！");
                 return;
             }
+
             List<string> uCols = Common.GetColumnNamesFromDt((DataTable)dataGridView1.DataSource);
             List<string> errCols = new List<string>();
             //验证上传的excel文件中是否有不能对应的字段名
-            foreach (string col in uCols) {
-                var dbCols = hidetxt_cols.Text.Split(',');
-                if (!dbCols.Contains(col)) {
+            var dbCols = columns.Keys.ToList();
+            foreach (string col in uCols)
+            {
+                if (!dbCols.Contains(col))
+                {
                     errCols.Add(col);
                 }
             }
-            if (errCols.Any()) {
-                MessageBox.Show($"以下字段在数据库的对应表中未能找到对应：[{string.Join(",",errCols)}]，请核对后再试！");
+            if (errCols.Any())
+            {
+                MessageBox.Show($"以下字段在数据库的对应表中未能找到对应：[{string.Join(",", errCols)}]，请核对后再试！");
                 return;
             }
 
             //验证上传的文件中是否有重复的字段名
-            if (uCols.Count() != uCols.Distinct().Count()) {
+            if (uCols.Count() != uCols.Distinct().Count())
+            {
                 MessageBox.Show($"导入了有相同字段名的数据，请核对后再试！");
                 return;
             }
 
+
+
+            //向数据库写入数据
+            DataOperator dataOperator = new DataOperator(conn,txt_table.Text);
+            dataOperator.AddDataWhenErrorRollback(ExcelHelper.ExcelImport(lab_path.Text), columns, uCols);
+
         }
 
         //检验数据库是否能正确链接
-        private bool TestConnection()
+        private bool TestConnection(ref SqlConnection conn )
         {
             if (string.IsNullOrEmpty(txt_table.Text))
             {
                 return false;
             }
-            SqlConnection conn;
+            //SqlConnection conn;
             //直接使用连接字符串连接
             if (!string.IsNullOrEmpty(txt_connStr.Text))
             {
@@ -131,7 +150,7 @@ namespace ExcelUploder
                 //测试链接是否能打开
                 conn.Open();
                 //测试表名是否存在
-                if (Common.TestConnAndTable(conn, txt_table.Text,hidetxt_cols))
+                if (Common.TestConnAndTable(conn, txt_table.Text).Count > 0)
                 {
                     return true;
                 }
@@ -151,7 +170,7 @@ namespace ExcelUploder
 
         //展示链接测试的结果，并返回测试成功与否
         private bool ShowTestMessage() {
-            var ret = TestConnection();
+            var ret = TestConnection(ref conn);
             if (ret)
             {
                 lab_alert.ForeColor = Color.Green;

@@ -11,6 +11,7 @@ namespace ExcelUploder
 {
     public static class Common
     {
+        
         /// <summary>
         /// 创建数据库链接，采用sql server账号登陆
         /// </summary>
@@ -56,7 +57,8 @@ namespace ExcelUploder
         /// <param name="conn"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public static bool TestConnAndTable(SqlConnection conn , string tableName,TextBox textBox) {
+        public static Dictionary<string, Type> TestConnAndTable(SqlConnection conn , string tableName ) {
+            Dictionary<string, Type> pairs = new Dictionary<string, Type>();
             DataTable dt = new DataTable();
             try
             {
@@ -64,26 +66,33 @@ namespace ExcelUploder
                 SqlCommand sqlCommand = new SqlCommand(sqlStr, conn);
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
                 sqlDataAdapter.Fill(dt);
-                textBox.Text = string.Join(",", GetColumnNamesFromDt(dt)); 
-                return true;
+                foreach (DataColumn column in dt.Columns) {
+                    pairs.Add(column.ColumnName.ToLower(),column.DataType);
+                }
+                return pairs;
             }
             catch (Exception)
             {
-                return false;
+                return new Dictionary<string, Type>();
             }
             finally {
-                dt = null;
+                conn.Close();
             }
         }
 
+        /// <summary>
+        /// 从datatable中取出字段名
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         public static List<string> GetColumnNamesFromDt(DataTable dt) {
             List<string> list = new List<string>();
             foreach (DataColumn columns in dt.Columns)
             {
+                var ss = columns.DataType;
                 list.Add(columns.ColumnName.ToLower());
             }
             return list;
         }
-
     }
 }

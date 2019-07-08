@@ -48,7 +48,6 @@
             this.btn_select = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.lab_path = new System.Windows.Forms.Label();
-            this.hidetxt_cols = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -250,14 +249,6 @@
             this.lab_path.Size = new System.Drawing.Size(0, 14);
             this.lab_path.TabIndex = 14;
             // 
-            // hidetxt_cols
-            // 
-            this.hidetxt_cols.Location = new System.Drawing.Point(12, 175);
-            this.hidetxt_cols.Name = "hidetxt_cols";
-            this.hidetxt_cols.Size = new System.Drawing.Size(29, 21);
-            this.hidetxt_cols.TabIndex = 15;
-            this.hidetxt_cols.Visible = false;
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -275,7 +266,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 621);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.hidetxt_cols);
             this.Controls.Add(this.lab_path);
             this.Controls.Add(this.btn_select);
             this.Controls.Add(this.btn_upload);
@@ -314,7 +304,6 @@
         private System.Windows.Forms.Label lab_alert;
         private System.Windows.Forms.Label lab_path;
         private System.Windows.Forms.CheckBox che_usewin;
-        private System.Windows.Forms.TextBox hidetxt_cols;
         private System.Windows.Forms.Panel panel1;
     }
 }
