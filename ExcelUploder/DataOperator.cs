@@ -67,13 +67,13 @@ namespace ExcelUploder
                             {
                                 //执行语句
                                 num += cmd.ExecuteNonQuery();
-                                
                             }
                             catch (Exception ex)
                             {
                                 if (isRollack)
                                 {
                                     myTrans.Rollback();
+                                    throw ex;
                                 }
                                 else {
                                     //不回滚，产生上传报告

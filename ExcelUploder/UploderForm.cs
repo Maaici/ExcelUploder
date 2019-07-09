@@ -115,8 +115,8 @@ namespace ExcelUploder
             DataOperator dataOperator = new DataOperator(conn,txt_table.Text);
             try
             {
-                //第三个参数根据radiobutton的选择情况，表示回滚和跳过两种错误处理方式(默认回滚)
-                int num = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns, true);
+                //第三个参数根据radiobutton的选择情况，表示回滚和跳过两种错误处理方式
+                int num = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns, radio_rollback.Checked);
                 MessageBox.Show($"导入成功！共计 {num} 条数据被导入！");
                 lab_path.Text = "";
                 dataGridView1.DataSource = null;
