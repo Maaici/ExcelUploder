@@ -70,6 +70,11 @@ namespace ExcelUploder
         //上传按钮
         private void Btn_upload_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.DataSource == null) {
+                MessageBox.Show($"请先选择上传的文件！");
+                return;
+            }
+            
             //拉取字段信息，如果抛异常说明连接字符串有异常
             Dictionary<string, Type> columns;
             try
@@ -82,9 +87,9 @@ namespace ExcelUploder
                 return;
             }
 
+            //验证上传的excel文件中是否有不能对应的字段名
             List<string> uCols = Common.GetColumnNamesFromDt((DataTable)dataGridView1.DataSource);
             List<string> errCols = new List<string>();
-            //验证上传的excel文件中是否有不能对应的字段名
             var dbCols = columns.Keys.ToList();
             foreach (string col in uCols)
             {
@@ -106,12 +111,23 @@ namespace ExcelUploder
                 return;
             }
 
-
-
             //向数据库写入数据
             DataOperator dataOperator = new DataOperator(conn,txt_table.Text);
-            dataOperator.AddDataWhenErrorRollback(ExcelHelper.ExcelImport(lab_path.Text), columns, uCols);
-
+            try
+            {
+                if (radio_rollback.Checked) {
+                    int num = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns,radio_rollback.Checked);
+                    if (num > 0)
+                    {
+                        MessageBox.Show($"导入成功！共计 {num} 条数据被导入！");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"以下原因导致失败：{ ex.Message } ！");
+            }
+            
         }
 
         //检验数据库是否能正确链接

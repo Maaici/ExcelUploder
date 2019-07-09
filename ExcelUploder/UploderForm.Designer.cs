@@ -49,9 +49,13 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.lab_path = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radio_rollback = new System.Windows.Forms.RadioButton();
+            this.radio_skip = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -207,7 +211,7 @@
             // 
             // btn_upload
             // 
-            this.btn_upload.Location = new System.Drawing.Point(642, 172);
+            this.btn_upload.Location = new System.Drawing.Point(735, 172);
             this.btn_upload.Name = "btn_upload";
             this.btn_upload.Size = new System.Drawing.Size(113, 37);
             this.btn_upload.TabIndex = 10;
@@ -217,7 +221,7 @@
             // 
             // btn_select
             // 
-            this.btn_select.Location = new System.Drawing.Point(107, 173);
+            this.btn_select.Location = new System.Drawing.Point(14, 172);
             this.btn_select.Name = "btn_select";
             this.btn_select.Size = new System.Drawing.Size(113, 37);
             this.btn_select.TabIndex = 11;
@@ -244,7 +248,7 @@
             // 
             this.lab_path.AutoSize = true;
             this.lab_path.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.lab_path.Location = new System.Drawing.Point(227, 183);
+            this.lab_path.Location = new System.Drawing.Point(134, 182);
             this.lab_path.Name = "lab_path";
             this.lab_path.Size = new System.Drawing.Size(0, 14);
             this.lab_path.TabIndex = 14;
@@ -260,11 +264,44 @@
             this.panel1.Size = new System.Drawing.Size(840, 393);
             this.panel1.TabIndex = 16;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.radio_skip);
+            this.groupBox2.Controls.Add(this.radio_rollback);
+            this.groupBox2.Location = new System.Drawing.Point(534, 172);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(195, 37);
+            this.groupBox2.TabIndex = 17;
+            this.groupBox2.TabStop = false;
+            // 
+            // radio_rollback
+            // 
+            this.radio_rollback.AutoSize = true;
+            this.radio_rollback.Checked = true;
+            this.radio_rollback.Location = new System.Drawing.Point(6, 10);
+            this.radio_rollback.Name = "radio_rollback";
+            this.radio_rollback.Size = new System.Drawing.Size(83, 16);
+            this.radio_rollback.TabIndex = 0;
+            this.radio_rollback.TabStop = true;
+            this.radio_rollback.Text = "错误时回滚";
+            this.radio_rollback.UseVisualStyleBackColor = true;
+            // 
+            // radio_skip
+            // 
+            this.radio_skip.AutoSize = true;
+            this.radio_skip.Location = new System.Drawing.Point(109, 10);
+            this.radio_skip.Name = "radio_skip";
+            this.radio_skip.Size = new System.Drawing.Size(83, 16);
+            this.radio_skip.TabIndex = 1;
+            this.radio_skip.Text = "错误时跳过";
+            this.radio_skip.UseVisualStyleBackColor = true;
+            // 
             // UploderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 621);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lab_path);
             this.Controls.Add(this.btn_select);
@@ -277,6 +314,8 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -305,6 +344,9 @@
         private System.Windows.Forms.Label lab_path;
         private System.Windows.Forms.CheckBox che_usewin;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radio_skip;
+        private System.Windows.Forms.RadioButton radio_rollback;
     }
 }
 

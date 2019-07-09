@@ -20,57 +20,75 @@ namespace ExcelUploder
             TableName = tbName;
         }
 
-        public int AddDataWhenErrorRollback(DataTable dt ,Dictionary<string,Type> pairs,List<string> uCols)
+        /// <summary>
+        /// 向目标表中添加数据
+        /// </summary>
+        /// <param name="dt">目标数据</param>
+        /// <param name="pairs">目标表字段信息</param>
+        /// <param name="isRollack">错误时是否回滚，true表示回滚，否则跳过错误行，并提供错误报告</param>
+        /// <returns></returns>
+        public int AddData(DataTable dt ,Dictionary<string,Type> pairs,bool isRollack)
         {
             var columns = Common.GetColumnNamesFromDt(dt);
+            if (columns.Count <= 0) {
+                return 0;
+            }
             int num = 0;
             using (SqlConn) {
                 using (SqlCommand cmd = SqlConn.CreateCommand())
                 {
+                    //开启一个事务
+                    SqlTransaction myTrans = SqlConn.BeginTransaction();
                     try
                     {
                         SqlConn.Open();
+                        StringBuilder builder = new StringBuilder();
                         foreach (DataRow dr in dt.Rows)
                         {
+                            //构造语句
+                            string values = "";
+                            builder.Clear();                                    
                             foreach (string col in columns)
                             {
-                                SqlParameter sqlParameter = new SqlParameter();
-                                sqlParameter.ParameterName = col.ToUpper();
-                                sqlParameter.Value = dr[col];
-                                sqlParameter.DbType = DbType.String;
+                                var colVal = dr[col].ToString();
                                 var colType = pairs[col].Name.ToUpper();
-                                if (colType.Contains("INT"))
-                                {
-                                    sqlParameter.DbType = DbType.Int32;
+                                if (colType.Contains("INT") || colType.Contains("DECIMAL") || (colType.Contains("DOUBLE"))){
+                                    builder.Append(string.IsNullOrEmpty(colVal)? "null" : colVal  + ",");
                                 }
-                                if (colType.Contains("DECIMAL"))
-                                {
-                                    sqlParameter.DbType = DbType.Decimal;
-                                }
-                                if (colType.Contains("DOUBLE"))
-                                {
-                                    sqlParameter.DbType = DbType.Double;
-                                }
-                                //sqlParameter.DbType = System.Type.GetType(dt.Columns[""].GetType());
-                                cmd.Parameters.Add(sqlParameter);
+                                else {
+                                    builder.Append("'" + (string.IsNullOrEmpty(colVal) ? "" : colVal) + "',");
+                                } 
                             }
-                            cmd.CommandText = $" insert into {TableName} ( {string.Join(",", columns)} ) values ({ string.Join(",", columns.Select(x => "@" + x.ToUpper())) }) ";
-
-                            num += cmd.ExecuteNonQuery();
+                            values = builder.ToString().Substring(0,builder.ToString().Length - 1);
+                            cmd.CommandText = $" insert into {TableName} ( {string.Join(",", columns)} ) values ({ values }) ";
+                            
+                            try
+                            {
+                                //执行语句
+                                num += cmd.ExecuteNonQuery();
+                                
+                            }
+                            catch (Exception ex)
+                            {
+                                if (isRollack)
+                                {
+                                    myTrans.Rollback();
+                                }
+                                else {
+                                    //不回滚，产生上传报告
+                                }
+                            }
                         }
+                        myTrans.Commit();
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        throw ex;
                     }
                 }
             }
             return num;
         }
-
-        //public int AddDataWhenErrorSkip(DataTable dt) {
-
-        //}
 
         /// <summary>
         /// 用于执行增加和删除语句
