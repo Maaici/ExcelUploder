@@ -115,21 +115,16 @@ namespace ExcelUploder
             DataOperator dataOperator = new DataOperator(conn,txt_table.Text);
             try
             {
-                if (radio_rollback.Checked) {
-                    int num = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns,radio_rollback.Checked);
-                    if (num > 0)
-                    {
-                        MessageBox.Show($"导入成功！共计 {num} 条数据被导入！");
-                        lab_path.Text = "";
-                        dataGridView1.DataSource = null;
-                    }
-                }
+                //第三个参数根据radiobutton的选择情况，表示回滚和跳过两种错误处理方式(默认回滚)
+                int num = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns, true);
+                MessageBox.Show($"导入成功！共计 {num} 条数据被导入！");
+                lab_path.Text = "";
+                dataGridView1.DataSource = null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"以下原因导致失败：{ ex.Message } ！");
             }
-            
         }
 
         //检验数据库是否能正确链接
