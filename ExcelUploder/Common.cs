@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,6 +94,24 @@ namespace ExcelUploder
                 list.Add(columns.ColumnName.ToLower());
             }
             return list;
+        }
+
+        /// <summary>
+        /// Stream 2 byte[]
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static byte[] StreamToBytes(Stream stream)
+        {
+            byte[] bytes = new byte[stream.Length];
+
+            stream.Read(bytes, 0, bytes.Length);
+
+            // 设置当前流的位置为流的开始 
+
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return bytes;
         }
     }
 }

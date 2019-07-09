@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExcelUploder
@@ -12,9 +14,9 @@ namespace ExcelUploder
     {
         public SqlConnection SqlConn { get; set; }
 
-        public string  TableName { get; set; }
+        public string TableName { get; set; }
 
-        public DataOperator(SqlConnection conn,string tbName)
+        public DataOperator(SqlConnection conn, string tbName)
         {
             SqlConn = conn;
             TableName = tbName;
@@ -27,14 +29,24 @@ namespace ExcelUploder
         /// <param name="pairs">目标表字段信息</param>
         /// <param name="isRollack">错误时是否回滚，true表示回滚，否则跳过错误行，并提供错误报告</param>
         /// <returns></returns>
-        public int AddData(DataTable dt ,Dictionary<string,Type> pairs,bool isRollack)
+        public int AddData(DataTable dt, Dictionary<string, Type> pairs, bool isRollack)
         {
             var columns = Common.GetColumnNamesFromDt(dt);
-            if (columns.Count <= 0) {
+            if (columns.Count <= 0)
+            {
                 return 0;
             }
+            dt.Columns.Add(new DataColumn("ErrMsg"));
+            //复制一个新的表格
+            DataTable newDt = new DataTable();
+            foreach (var item in columns)
+            {
+                newDt.Columns.Add(new DataColumn(item));
+            }
+            newDt.Columns.Add(new DataColumn("ErrMsg"));
             int num = 0;
-            using (SqlConn) {
+            using (SqlConn)
+            {
                 using (SqlCommand cmd = SqlConn.CreateCommand())
                 {
                     try
@@ -48,21 +60,24 @@ namespace ExcelUploder
                         {
                             //构造语句
                             string values = "";
-                            builder.Clear();                                    
+                            builder.Clear();
                             foreach (string col in columns)
                             {
                                 var colVal = dr[col].ToString();
+
                                 var colType = pairs[col].Name.ToUpper();
-                                if (colType.Contains("INT") || colType.Contains("DECIMAL") || (colType.Contains("DOUBLE"))){
-                                    builder.Append(string.IsNullOrEmpty(colVal)? "null" : colVal  + ",");
+                                if (colType.Contains("INT") || colType.Contains("DECIMAL") || (colType.Contains("DOUBLE")))
+                                {
+                                    builder.Append((string.IsNullOrEmpty(colVal) ? "null" : Regex.IsMatch(colVal, @"^(-?\d+)(\.\d+)?$") ? colVal : "'"+ colVal + "'") + ",");
                                 }
-                                else {
+                                else
+                                {
                                     builder.Append("'" + (string.IsNullOrEmpty(colVal) ? "" : colVal) + "',");
-                                } 
+                                }
                             }
-                            values = builder.ToString().Substring(0,builder.ToString().Length - 1);
+                            values = builder.ToString().Substring(0, builder.ToString().Length - 1);
                             cmd.CommandText = $" insert into {TableName} ( {string.Join(",", columns)} ) values ({ values }) ";
-                            
+
                             try
                             {
                                 //执行语句
@@ -75,10 +90,21 @@ namespace ExcelUploder
                                     myTrans.Rollback();
                                     throw ex;
                                 }
-                                else {
+                                else
+                                {
                                     //不回滚，产生上传报告
+                                    dr["ErrMsg"] = ex.Message;
+                                    newDt.Rows.Add(dr);
                                 }
                             }
+                        }
+                        //如果选择跳过，并且期间产生异常，产生异常报告
+                        if (isRollack && newDt.Rows.Count > 0)
+                        {
+                            var stream = ExcelHelper.DataTable2ExcelMemory(dt);
+                            FileStream fs = new FileStream($"D:\\APP_DATA\\{DateTime.Now.ToString("yyyyMMddHHmmssfff.xls")}", FileMode.Create);
+                            byte[] bytes = Common.StreamToBytes(stream);
+                            fs.Write(bytes, 0, bytes.Length);
                         }
                         myTrans.Commit();
                     }

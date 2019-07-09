@@ -4,6 +4,7 @@ using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,6 +63,40 @@ namespace ExcelUploder
                 dt.Rows.Add(dataRow);
             }
             return dt;
+        }
+
+        /// <summary>
+        /// DataTable转化成excel文件流
+        /// </summary>
+        /// <param name="dt">待转资源</param>
+        /// <returns></returns>
+        public static Stream DataTable2ExcelMemory(DataTable dt)
+        {
+            List<string> colNames = Common.GetColumnNamesFromDt(dt);
+            Stream stream = new MemoryStream();
+            //创建excel
+            IWorkbook workbook = new HSSFWorkbook();
+            ISheet sheet = workbook.CreateSheet("onesheet");
+            IRow row0 = sheet.CreateRow(0);
+            //写标题
+            for (int i = 0; i < colNames.Count(); i++)
+            {
+                row0.CreateCell(i).SetCellValue(colNames[i]);
+            }
+            int lineNo = 1;
+            foreach (DataRow item in dt.Rows)
+            {
+                IRow newRow = sheet.CreateRow(lineNo);
+                for (int i = 0; i < colNames.Count(); i++)
+                {
+                    var val = item[colNames[i]];
+                    newRow.CreateCell(i).SetCellValue(val == null ? "" : val.ToString());
+                }
+                lineNo++;
+            }
+            workbook.Write(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+            return stream;
         }
     }
 }
