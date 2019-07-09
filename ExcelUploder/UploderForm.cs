@@ -120,6 +120,8 @@ namespace ExcelUploder
                     if (num > 0)
                     {
                         MessageBox.Show($"导入成功！共计 {num} 条数据被导入！");
+                        lab_path.Text = "";
+                        dataGridView1.DataSource = null;
                     }
                 }
             }

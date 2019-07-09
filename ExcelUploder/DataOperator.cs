@@ -37,11 +37,12 @@ namespace ExcelUploder
             using (SqlConn) {
                 using (SqlCommand cmd = SqlConn.CreateCommand())
                 {
-                    //开启一个事务
-                    SqlTransaction myTrans = SqlConn.BeginTransaction();
                     try
                     {
                         SqlConn.Open();
+                        //开启一个事务
+                        SqlTransaction myTrans = SqlConn.BeginTransaction();
+                        cmd.Transaction = myTrans;
                         StringBuilder builder = new StringBuilder();
                         foreach (DataRow dr in dt.Rows)
                         {
