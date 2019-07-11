@@ -29,12 +29,12 @@ namespace ExcelUploder
         /// <param name="pairs">目标表字段信息</param>
         /// <param name="isRollack">错误时是否回滚，true表示回滚，否则跳过错误行，并提供错误报告</param>
         /// <returns></returns>
-        public int AddData(DataTable dt, Dictionary<string, Type> pairs, bool isRollack)
+        public string  AddData(DataTable dt, Dictionary<string, Type> pairs, bool isRollack)
         {
             var columns = Common.GetColumnNamesFromDt(dt);
             if (columns.Count <= 0)
             {
-                return 0;
+                return "没有数据导入!";
             }
             dt.Columns.Add(new DataColumn("ErrMsg"));
             //复制一个新的表格
@@ -45,6 +45,8 @@ namespace ExcelUploder
             }
             newDt.Columns.Add(new DataColumn("ErrMsg"));
             int num = 0;
+            int errNum = 0;
+            string fileName = "";
             using (SqlConn)
             {
                 using (SqlCommand cmd = SqlConn.CreateCommand())
@@ -53,8 +55,11 @@ namespace ExcelUploder
                     {
                         SqlConn.Open();
                         //开启一个事务
-                        SqlTransaction myTrans = SqlConn.BeginTransaction();
-                        cmd.Transaction = myTrans;
+                        SqlTransaction myTrans = null ;
+                        if (isRollack) {
+                            myTrans = SqlConn.BeginTransaction();
+                            cmd.Transaction = myTrans;
+                        }
                         StringBuilder builder = new StringBuilder();
                         foreach (DataRow dr in dt.Rows)
                         {
@@ -87,26 +92,33 @@ namespace ExcelUploder
                             {
                                 if (isRollack)
                                 {
-                                    myTrans.Rollback();
+                                    if(myTrans != null)
+                                        myTrans.Rollback();
                                     throw ex;
                                 }
                                 else
                                 {
+                                    errNum++;
                                     //不回滚，产生上传报告
                                     dr["ErrMsg"] = ex.Message;
-                                    newDt.Rows.Add(dr);
+                                    newDt.Rows.Add(dr.ItemArray);
                                 }
                             }
                         }
                         //如果选择跳过，并且期间产生异常，产生异常报告
-                        if (isRollack && newDt.Rows.Count > 0)
+                        if (!isRollack && newDt.Rows.Count > 0)
                         {
                             var stream = ExcelHelper.DataTable2ExcelMemory(dt);
-                            FileStream fs = new FileStream($"D:\\APP_DATA\\{DateTime.Now.ToString("yyyyMMddHHmmssfff.xls")}", FileMode.Create);
+                            fileName = $"D:\\APP_DATA\\{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xls";
+                            FileStream fs = new FileStream(fileName, FileMode.Create);
                             byte[] bytes = Common.StreamToBytes(stream);
                             fs.Write(bytes, 0, bytes.Length);
                         }
-                        myTrans.Commit();
+                        if (isRollack)
+                        {
+                            if (myTrans != null)
+                                myTrans.Commit();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -114,7 +126,7 @@ namespace ExcelUploder
                     }
                 }
             }
-            return num;
+            return errNum == 0 ? $"导入成功！共计 {num} 条数据被导入！" : $"导入成功！成功导入{num}条,失败{errNum}条！详见错误报告：{fileName}";
         }
 
         /// <summary>
