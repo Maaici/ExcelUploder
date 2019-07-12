@@ -75,6 +75,7 @@
     <Compile Include="ProgressBar.Designer.cs">
       <DependentUpon>ProgressBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultModel.cs" />
     <Compile Include="UploderForm.cs">
       <SubType>Form</SubType>
     </Compile>

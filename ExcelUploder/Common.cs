@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -97,7 +98,7 @@ namespace ExcelUploder
         }
 
         /// <summary>
-        /// Stream 2 byte[]
+        /// 流 转为 比特数组
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
@@ -112,6 +113,35 @@ namespace ExcelUploder
             stream.Seek(0, SeekOrigin.Begin);
 
             return bytes;
+        }
+
+        /// <summary>
+        /// 根据行数据生成插入语句
+        /// </summary>
+        /// <param name="dr">行数据</param>
+        /// <param name="columns">列信息</param>
+        /// <param name="pairs">数据库对应表的所有列名和列对应的type(非dbtype)</param>
+        /// <param name="TableName">表名</param>
+        /// <returns></returns>
+        public static string GetSqlStrByDataRow(DataRow dr,List<string> columns, Dictionary<string, Type> pairs,string TableName) {
+            string values = "";
+            StringBuilder builder = new StringBuilder();
+            foreach (string col in columns)
+            {
+                var colVal = dr[col].ToString();
+                var ss = dr.ItemArray;
+                var colType = pairs[col].Name.ToUpper();
+                if (colType.Contains("INT") || colType.Contains("DECIMAL") || (colType.Contains("DOUBLE")))
+                {
+                    builder.Append((string.IsNullOrEmpty(colVal) ? "null" : Regex.IsMatch(colVal, @"^(-?\d+)(\.\d+)?$") ? colVal : "'" + colVal + "'") + ",");
+                }
+                else
+                {
+                    builder.Append("'" + (string.IsNullOrEmpty(colVal) ? "" : colVal) + "',");
+                }
+            }
+            values = builder.ToString().Substring(0, builder.ToString().Length - 1);
+            return $" insert into {TableName} ( {string.Join(",", columns)} ) values ({ values }) ";
         }
     }
 }

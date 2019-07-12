@@ -98,5 +98,21 @@ namespace ExcelUploder
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
+
+        /// <summary>
+        /// Datatable转excel文件
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns>返回文件的全路径</returns>
+        public static string DataTable2File(DataTable dt)
+        {
+            string fileName;
+            var stream = ExcelHelper.DataTable2ExcelMemory(dt);
+            fileName = $"D:\\APP_DATA\\{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xls";
+            FileStream fs = new FileStream(fileName, FileMode.Create);
+            byte[] bytes = Common.StreamToBytes(stream);
+            fs.Write(bytes, 0, bytes.Length);
+            return fileName;
+        }
     }
 }

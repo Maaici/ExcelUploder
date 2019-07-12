@@ -116,8 +116,18 @@ namespace ExcelUploder
             try
             {
                 //第三个参数根据radiobutton的选择情况，表示回滚和跳过两种错误处理方式
-                string errMsg = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns, radio_rollback.Checked);
-                MessageBox.Show(errMsg);
+                ResultModel result = dataOperator.AddData(ExcelHelper.ExcelImport(lab_path.Text), columns, radio_rollback.Checked);
+                if (result.IsHaveReport)
+                {
+                    DialogResult dialog = MessageBox.Show(result.ErrMsg,"异常报告", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                    if (dialog == DialogResult.OK) {
+                        System.Diagnostics.Process.Start(result.FileName);
+                    }
+                }
+                else {
+                    MessageBox.Show(result.ErrMsg);
+                }
+                
                 lab_path.Text = "";
                 dataGridView1.DataSource = null;
             }
