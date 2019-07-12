@@ -34,7 +34,7 @@ namespace ExcelUploder
             var columns = Common.GetColumnNamesFromDt(dt);
             if (columns.Count <= 0)
             {
-                return new ResultModel { IsHaveReport = false,ErrMsg = "没有数据导入!" };
+                return new ResultModel { IsHaveReport = false, ErrMsg = "没有数据导入!" };
             }
             dt.Columns.Add(new DataColumn("ErrMsg"));
             //复制一个新的表格
@@ -55,16 +55,17 @@ namespace ExcelUploder
                     {
                         SqlConn.Open();
                         //开启一个事务
-                        SqlTransaction myTrans = null ;
-                        if (isRollack) {
+                        SqlTransaction myTrans = null;
+                        if (isRollack)
+                        {
                             myTrans = SqlConn.BeginTransaction();
                             cmd.Transaction = myTrans;
                         }
-                        
+
                         foreach (DataRow dr in dt.Rows)
                         {
                             //构造语句
-                            string sqlStr = Common.GetSqlStrByDataRow(dr,columns,pairs,TableName);
+                            string sqlStr = Common.GetSqlStrByDataRow(dr, columns, pairs, TableName);
                             cmd.CommandText = sqlStr;
 
                             try
@@ -76,7 +77,7 @@ namespace ExcelUploder
                             {
                                 if (isRollack)
                                 {
-                                    if(myTrans != null)
+                                    if (myTrans != null)
                                         myTrans.Rollback();
                                     throw ex;
                                 }
@@ -92,7 +93,8 @@ namespace ExcelUploder
                         //如果选择跳过，并且期间产生异常，产生异常报告
                         if (!isRollack && newDt.Rows.Count > 0)
                         {
-                            fileName = ExcelHelper.DataTable2File(dt);
+                            fileName = ExcelHelper.DataTable2File(newDt); //仅出错的在报告中体现
+                            //fileName = ExcelHelper.DataTable2File(dt); //所有数据都在报告中
                         }
                         if (isRollack)
                         {
@@ -108,12 +110,13 @@ namespace ExcelUploder
             }
             if (errNum > 0)
             {
-                return new ResultModel { IsHaveReport = true, ErrMsg = $"导入成功！成功导入{num}条,失败{errNum}条！详见错误报告：{fileName},立即查看报告?" ,FileName = fileName};
+                return new ResultModel { IsHaveReport = true, ErrMsg = $"导入成功！成功导入{num}条,失败{errNum}条！详见错误报告：{fileName},立即查看报告?", FileName = fileName };
             }
-            else {
-                return new ResultModel { IsHaveReport = false,ErrMsg = $"导入成功！共计 {num} 条数据被导入！" };
+            else
+            {
+                return new ResultModel { IsHaveReport = false, ErrMsg = $"导入成功！共计 {num} 条数据被导入！" };
             }
-            
+
         }
 
         /// <summary>

@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ExcelUploder
 {
     public static class Common
     {
-        
+
         /// <summary>
         /// 创建数据库链接，采用sql server账号登陆
         /// </summary>
@@ -22,9 +19,10 @@ namespace ExcelUploder
         /// <param name="userName"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static SqlConnection GetConnection( string dbSource, string dbNama , string userName ,string pwd) {
+        public static SqlConnection GetConnection(string dbSource, string dbNama, string userName, string pwd)
+        {
             SqlConnection conn = new SqlConnection();
-            conn.ConnectionString = $"Data Source={dbSource};Initial Catalog={dbNama};User ID={userName};Password={pwd};timeout=5" ;
+            conn.ConnectionString = $"Data Source={dbSource};Initial Catalog={dbNama};User ID={userName};Password={pwd};timeout=5";
             return conn;
         }
 
@@ -59,7 +57,8 @@ namespace ExcelUploder
         /// <param name="conn"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public static Dictionary<string, Type> TestConnAndTable(SqlConnection conn , string tableName ) {
+        public static Dictionary<string, Type> TestConnAndTable(SqlConnection conn, string tableName)
+        {
             Dictionary<string, Type> pairs = new Dictionary<string, Type>();
             DataTable dt = new DataTable();
             try
@@ -68,8 +67,9 @@ namespace ExcelUploder
                 SqlCommand sqlCommand = new SqlCommand(sqlStr, conn);
                 SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
                 sqlDataAdapter.Fill(dt);
-                foreach (DataColumn column in dt.Columns) {
-                    pairs.Add(column.ColumnName.ToLower(),column.DataType);
+                foreach (DataColumn column in dt.Columns)
+                {
+                    pairs.Add(column.ColumnName.ToLower(), column.DataType);
                 }
                 return pairs;
             }
@@ -77,7 +77,8 @@ namespace ExcelUploder
             {
                 return new Dictionary<string, Type>();
             }
-            finally {
+            finally
+            {
                 conn.Close();
             }
         }
@@ -87,7 +88,8 @@ namespace ExcelUploder
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static List<string> GetColumnNamesFromDt(DataTable dt) {
+        public static List<string> GetColumnNamesFromDt(DataTable dt)
+        {
             List<string> list = new List<string>();
             foreach (DataColumn columns in dt.Columns)
             {
@@ -123,7 +125,8 @@ namespace ExcelUploder
         /// <param name="pairs">数据库对应表的所有列名和列对应的type(非dbtype)</param>
         /// <param name="TableName">表名</param>
         /// <returns></returns>
-        public static string GetSqlStrByDataRow(DataRow dr,List<string> columns, Dictionary<string, Type> pairs,string TableName) {
+        public static string GetSqlStrByDataRow(DataRow dr, List<string> columns, Dictionary<string, Type> pairs, string TableName)
+        {
             string values = "";
             StringBuilder builder = new StringBuilder();
             foreach (string col in columns)
